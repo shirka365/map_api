@@ -17,35 +17,33 @@
   <div id="map"></div>
 
   <script>
-    // Initialize the map and set it to Beit HaDfus 7, Givat Shaul, Jerusalem
-    const map = L.map('map').setView([31.78571325544625, 35.18973815767127], 14); // Centered on Beit HaDfus 7, Givat Shaul, Jerusalem
+    // Initialize the map with a default location (Beit HaDfus 7)
+    const defaultLocation = [31.78571325544625, 35.18973815767127];
+    const map = L.map('map').setView(defaultLocation, 14);
 
-       // Add OpenStreetMap tile layer
-       L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    // Add OpenStreetMap tile layer
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       attribution: '© OpenStreetMap contributors',
     }).addTo(map);
 
-    // Add a marker at Beit HaDfus 7, Givat Shaul, Jerusalem
-    L.marker([31.78571325544625, 35.18973815767127]).addTo(map)
-      .bindPopup('בית הדפוס 7, גבעת שאול, ירושלים')
-      .openPopup(); // Open the popup only for Beit HaDfus 7 marker
+    // Create a marker for Beit HaDfus 7 with the popup text
+    const addressMarker = L.marker(defaultLocation)
+      .addTo(map)
+      .bindPopup('בית הדפוס 7, גבעת שאול, ירושלים');
 
-
-
-    // Create a custom icon for the charging stations (replace with the URL of your uploaded image)
+    // Create a custom icon for the charging stations
     const chargingStationIcon = L.icon({
-      iconUrl: 'https://github.com/shirka365/map_api/blob/main/charger.png?raw=true', // Path to the uploaded image (assuming it's accessible)
-      iconSize: [35, 35],  // Adjust size as necessary
-      iconAnchor: [15, 30], // Adjust anchor point
-      popupAnchor: [0, -30] // Adjust popup position
+      iconUrl: 'https://github.com/shirka365/map_api/blob/main/charger.png?raw=true',
+      iconSize: [35, 35],
+      iconAnchor: [15, 30],
+      popupAnchor: [0, -30]
     });
-
 
     // Add markers for the EV charging stations with the custom icon
     const evStations = [
       { lat: 31.788919546708733, lon: 35.18926112337026, popup: 'פז תחנת דלק, עקיבא אזולאי 1, 528 מטרים' },
-      { lat: 31.78471616915485, lon: 35.21138582806132, popup: 'חניון עיני,עובדיה סומך 2, 2 ק"מ' },
-      { lat: 31.7754901106181, lon: 35.22205067368176, popup: 'פז תחנת דלק, דוד המלך 19, 3.3 ק"מ '},
+      { lat: 31.78471616915485, lon: 35.21138582806132, popup: 'חניון עיני, עובדיה סומך 2, 2 ק"מ' },
+      { lat: 31.7754901106181, lon: 35.22205067368176, popup: 'פז תחנת דלק, דוד המלך 19, 3.3 ק"מ' },
       { lat: 31.81765495670033, lon: 35.19448731970764, popup: 'עמדת טעינה קניון רמות, 3.6 ק"מ' },
       { lat: 31.78601460620713, lon: 35.18933639087335, popup: 'חניון בית הדפוס 12, 113 מטרים' }
     ];
@@ -53,8 +51,40 @@
     evStations.forEach(station => {
       L.marker([station.lat, station.lon], { icon: chargingStationIcon })
         .addTo(map)
-        .bindPopup(station.popup); // No openPopup() here
+        .bindPopup(station.popup);
     });
+
+    // Locate user's current location
+    map.locate({ setView: true, maxZoom: 16 });
+
+    // Update Beit HaDfus marker to user's current location
+    function onLocationFound(e) {
+      const userLocation = e.latlng;
+
+      // Update the Beit HaDfus marker's position to the user's current location
+      addressMarker.setLatLng(userLocation)
+        .bindPopup('בית הדפוס 7, גבעת שאול, ירושלים')
+        .openPopup();
+
+      // Add a circle around the user's location
+      L.circle(userLocation, e.accuracy, {
+        color: 'blue',
+        fillColor: 'white',
+        fillOpacity: 0.5
+      }).addTo(map);
+    }
+
+    // Handle the location found event
+    map.on('locationfound', onLocationFound);
+
+    // Handle location errors
+    function onLocationError(e) {
+      alert(`Unable to retrieve your location: ${e.message}`);
+      // Open the default Beit HaDfus marker if location fails
+      addressMarker.openPopup();
+    }
+
+    map.on('locationerror', onLocationError);
   </script>
 
 </body>
