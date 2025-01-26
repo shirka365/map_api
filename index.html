@@ -31,25 +31,32 @@
       .addTo(map)
       .bindPopup('בית הדפוס 7, גבעת שאול, ירושלים');
 
-    // Create a custom icon for the charging stations
-    const chargingStationIcon = L.icon({
-      iconUrl: 'https://github.com/shirka365/map_api/blob/main/charger.png?raw=true',
+    // Define two custom icons for the charging stations
+    const iconElectric = L.icon({
+      iconUrl: 'https://github.com/shirka365/map_api/blob/main/electric.png?raw=true',
       iconSize: [35, 35],
       iconAnchor: [15, 30],
       popupAnchor: [0, -30]
     });
 
-    // Add markers for the EV charging stations with the custom icon
+    const iconElectricGreen = L.icon({
+      iconUrl: 'https://github.com/shirka365/map_api/blob/main/electric_green.png?raw=true',
+      iconSize: [35, 35],
+      iconAnchor: [15, 30],
+      popupAnchor: [0, -30]
+    });
+
+    // Add markers for the EV charging stations with specific icons
     const evStations = [
-      { lat: 31.788919546708733, lon: 35.18926112337026, popup: 'פז תחנת דלק, עקיבא אזולאי 1, 528 מטרים' },
-      { lat: 31.78471616915485, lon: 35.21138582806132, popup: 'חניון עיני, עובדיה סומך 2, 2 ק"מ' },
-      { lat: 31.7754901106181, lon: 35.22205067368176, popup: 'פז תחנת דלק, דוד המלך 19, 3.3 ק"מ' },
-      { lat: 31.81765495670033, lon: 35.19448731970764, popup: 'עמדת טעינה קניון רמות, 3.6 ק"מ' },
-      { lat: 31.78601460620713, lon: 35.18933639087335, popup: 'חניון בית הדפוס 12, 113 מטרים' }
+      { lat: 31.788919546708733, lon: 35.18926112337026, popup: 'פז תחנת דלק, עקיבא אזולאי 1, 528 מטרים', icon: iconElectric },
+      { lat: 31.78471616915485, lon: 35.21138582806132, popup: 'חניון עיני, עובדיה סומך 2, 2 ק"מ', icon: iconElectricGreen },
+      { lat: 31.7754901106181, lon: 35.22205067368176, popup: 'פז תחנת דלק, דוד המלך 19, 3.3 ק"מ', icon: iconElectricGreen },
+      { lat: 31.81765495670033, lon: 35.19448731970764, popup: 'עמדת טעינה קניון רמות, 3.6 ק"מ', icon: iconElectric },
+      { lat: 31.78601460620713, lon: 35.18933639087335, popup: 'חניון בית הדפוס 12, 113 מטרים', icon: iconElectricGreen }
     ];
 
     evStations.forEach(station => {
-      L.marker([station.lat, station.lon], { icon: chargingStationIcon })
+      L.marker([station.lat, station.lon], { icon: station.icon })
         .addTo(map)
         .bindPopup(station.popup);
     });
